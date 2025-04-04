@@ -1,85 +1,474 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+// import { computed, ref } from "vue"
+import { ref } from 'vue'
+// import TodoTask from "./components/TodoTask.vue"
+
+const tasks = ref([
+  {
+    id: 0,
+    text: 'Изучить основы Vue',
+    isCompleted: true,
+  },
+  {
+    id: 1,
+    text: 'Сделать проекты на Vue',
+    isCompleted: false,
+  },
+  {
+    id: 2,
+    text: 'Устроиться на работу',
+    isCompleted: false,
+  },
+])
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <!-- <nav>
+    <RouterLink to="/">Home</RouterLink>
+    <RouterLink to="/about">About</RouterLink>
+  </nav>
+  <RouterView /> -->
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <div class="container--home">
+    <h1>Список задач</h1>
+    <a class="create-link" href="#">Создать задачу</a>
+    <div class="task">
+      <p class="task__number">99.</p>
+      <p class="task__text">Изучить основы Vue</p>
+      <div>
+        <button class="task__delete" @click="deleteTask(task.id)">Удалить</button>
+        <button class="task__edit" @click="editTask(task.id)">Редактировать</button>
+      </div>
     </div>
-  </header>
+  </div>
 
-  <RouterView />
+  <div class="container--create">
+    <form @submit.prevent="addTask" class="create__form">
+      <label for="create-task">Название задачи</label>
+      <input v-model="newTask" type="text" placeholder="" id="create-task" />
+      <div>
+        <button class="create__cancel">Отменить</button>
+        <button class="create__save">Сохранить</button>
+      </div>
+    </form>
+  </div>
+  <div class="container--edit">
+    <form @submit.prevent="addTask" class="edit__form">
+      <label for="edit-task">Название задачи</label>
+      <input v-model="newTask" type="text" placeholder="" id="edit-task" />
+      <div>
+        <button class="edit__cancel">Отменить</button>
+        <button class="edit__save">Сохранить</button>
+      </div>
+    </form>
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
   border: 0;
+  box-sizing: border-box;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+.container--home {
+  width: 412px;
+  margin: 0 auto;
+  padding: 12px;
+  background-color: #e6edf9;
+  border-bottom: 2px solid #ffffff;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+.container--home h1 {
+  margin-bottom: 12px;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+  text-align: center;
+}
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
+.create-link {
+  display: block;
 
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+  /* height: 100%; */
+  /* width: 73px; */
+  padding: 8px 15px;
+  margin-bottom: 8px;
+
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+
+  line-height: 1;
+  color: #67c23a;
+
+  outline: none;
+  text-decoration: none;
+  border: 2px solid #b3e19d;
+  border-radius: 5px;
+  /* background-color: #2199e8; */
+
+  display: block;
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.create-link:hover,
+.create-link:focus,
+.create-link:active {
+  background-color: #67c23a;
+  color: #fffff3;
+  border: 2px solid #67c23a;
+}
+
+.task {
+  border: 1px solid #9ca3af;
+  border-radius: 5px;
+  min-height: 96px;
+  width: 100%;
+
+  margin-bottom: 20px;
+  padding: 12px;
+
+  display: flex;
+  align-items: center;
+}
+
+.task__number {
+  width: 30px;
+  flex-shrink: 0;
+}
+
+.task__text {
+  flex-grow: 1;
+  padding-right: 10px;
+}
+
+.task div {
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 130px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.task__delete {
+  height: 32px;
+  width: 100%;
+
+  font-weight: 600;
+  color: #f56c93;
+
+  border: 2px solid #facbcb;
+  border-radius: 5px;
+  background-color: #fef0f0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.task__delete:hover,
+.task__delete:focus,
+.task__delete:active {
+  background-color: #f56c6c;
+  color: #fffff6;
+  border: 2px solid #f56c6c;
+}
+
+.task__edit {
+  height: 32px;
+  width: 100%;
+
+  font-weight: 600;
+  color: #40b4ff;
+
+  border: 2px solid #a0cfff;
+  border-radius: 5px;
+  background-color: #ecf5ff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.task__edit:hover,
+.task__edit:focus,
+.task__edit:active {
+  background-color: #409eff;
+  color: #f3ffff;
+  border: 2px solid #409eff;
+}
+
+/* _______ */
+
+.container--create {
+  width: 412px;
+  margin: 0 auto;
+  padding: 12px;
+  background-color: #e6edf9;
+  border-bottom: 2px solid #ffffff;
+}
+
+.create__form {
+}
+
+.create__form label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.create__form input {
+  display: block;
+
+  height: 35px;
+  width: 100%;
+
+  padding: 1px 10px;
+
+  margin-bottom: 18px;
+
+  font-style: normal;
+  font-weight: 400;
+  /* font-size: 1rem; */
+  color: black;
+
+  border: 1px solid #9ca3af;
+  border-radius: 5px;
+  outline: none;
+  background-color: #fefefe;
+
+  transition: all 0.4s ease;
+}
+
+.create__form input::placeholder {
+  font-style: normal;
+  font-weight: 400;
+  /* font-size: 1rem; */
+  color: black;
+  /* opacity: 0.4; */
+}
+
+.create__form input:hover {
+  border-color: #c0c4cc;
+}
+
+.create__form input:focus,
+.create__form input:active {
+  border-color: #a0cfff;
+}
+
+.create__form div {
+  display: flex;
+}
+
+.create__cancel {
+  width: 50%;
+  height: 32px;
+
+  font-weight: 600;
+  color: #f56c93;
+
+  border: 2px solid #facbcb;
+  border-radius: 5px;
+  background-color: #fef0f0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.create__cancel:hover,
+.create__cancel:focus,
+.create__cancel:active {
+  background-color: #f56c6c;
+  color: #fffff6;
+  border: 2px solid #f56c6c;
+}
+
+.create__save {
+  width: 50%;
+  height: 32px;
+
+  font-weight: 600;
+  color: #40b4ff;
+
+  border: 2px solid #a0cfff;
+  border-radius: 5px;
+  background-color: #ecf5ff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.create__save:hover,
+.create__save:focus,
+.create__save:active {
+  background-color: #409eff;
+  color: #f3ffff;
+  border: 2px solid #409eff;
+}
+
+/* _______ */
+
+/* .container--edit {
+}
+
+.edit__form {
+}
+
+.edit__form label {
+}
+
+.edit__form input {
+}
+
+.edit__form div {
+}
+
+.edit__cancel {
+}
+
+.edit__save {
+} */
+
+.container--edit {
+  width: 412px;
+  margin: 0 auto;
+  padding: 12px;
+  background-color: #e6edf9;
+  border-bottom: 2px solid #ffffff;
+}
+
+.edit__form {
+}
+
+.edit__form label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.edit__form input {
+  display: block;
+
+  height: 35px;
+  width: 100%;
+
+  padding: 1px 10px;
+
+  margin-bottom: 18px;
+
+  font-style: normal;
+  font-weight: 400;
+  /* font-size: 1rem; */
+  color: black;
+
+  border: 1px solid #9ca3af;
+  border-radius: 5px;
+  outline: none;
+  background-color: #fefefe;
+
+  transition: all 0.4s ease;
+}
+
+.edit__form input::placeholder {
+  font-style: normal;
+  font-weight: 400;
+  /* font-size: 1rem; */
+  color: black;
+  /* opacity: 0.4; */
+}
+
+.edit__form input:hover {
+  border-color: #c0c4cc;
+}
+
+.edit__form input:focus,
+.edit__form input:active {
+  border-color: #a0cfff;
+}
+
+.edit__form div {
+  display: flex;
+}
+
+.edit__cancel {
+  width: 50%;
+  height: 32px;
+
+  font-weight: 600;
+  color: #f56c93;
+
+  border: 2px solid #facbcb;
+  border-radius: 5px;
+  background-color: #fef0f0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.edit__cancel:hover,
+.edit__cancel:focus,
+.edit__cancel:active {
+  background-color: #f56c6c;
+  color: #fffff6;
+  border: 2px solid #f56c6c;
+}
+
+.edit__save {
+  width: 50%;
+  height: 32px;
+
+  font-weight: 600;
+  color: #40b4ff;
+
+  border: 2px solid #a0cfff;
+  border-radius: 5px;
+  background-color: #ecf5ff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.edit__save:hover,
+.edit__save:focus,
+.edit__save:active {
+  background-color: #409eff;
+  color: #f3ffff;
+  border: 2px solid #409eff;
 }
 </style>
