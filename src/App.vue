@@ -26,6 +26,8 @@ const newTask = ref('')
 const editedTask = ref('')
 const idForEditedTask = ref(0)
 
+const isTransitionFromHome = ref(false)
+
 const deleteTask = (id) => {
   tasks.value = tasks.value.filter((task) => task.id !== id)
 
@@ -64,16 +66,23 @@ const editTask = (id) => {
   // console.log(id)
   editedTask.value = tasks.value[id].description
   idForEditedTask.value = id
-  // newTask.value = ''
+  isTransitionFromHome.value = !isTransitionFromHome.value
+  isTransitionFromHome.value = true
 }
 
 const saveEditedTask = () => {
-  tasks.value[idForEditedTask.value].description = editedTask.value
-  editedTask.value = ''
+  // проверить, что if работает !!!
+  if (isTransitionFromHome.value === true) {
+    tasks.value[idForEditedTask.value].description = editedTask.value
+    editedTask.value = ''
+  } else {
+    editedTask.value = ''
+  }
 }
 
 const cancelEditTask = () => {
   editedTask.value = ''
+  isTransitionFromHome.value = false
 }
 </script>
 
@@ -120,6 +129,9 @@ const cancelEditTask = () => {
 
   <div class="container--edit">
     <h2>Редактировать задачу</h2>
+    <div>Значение текущее editedTask: {{ editedTask }}</div>
+    <div>Значение текущее idForEditedTask: {{ idForEditedTask }}</div>
+    <div>Значение текущее isTransitionFromHome: {{ isTransitionFromHome }}</div>
 
     <form @submit.prevent="saveEditedTask" class="edit__form">
       <label for="edit-task">Название задачи</label>
