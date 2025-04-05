@@ -6,20 +6,75 @@ import { ref } from 'vue'
 const tasks = ref([
   {
     id: 0,
-    text: 'Изучить основы Vue',
+    description: 'Изучить основы Vue',
     isCompleted: true,
   },
   {
     id: 1,
-    text: 'Сделать проекты на Vue',
+    description: 'Подготовиться к собеседованию',
     isCompleted: false,
   },
   {
     id: 2,
-    text: 'Устроиться на работу',
+    description: 'Устроиться на работу',
     isCompleted: false,
   },
 ])
+
+const newTask = ref('')
+
+const editedTask = ref('')
+const idForEditedTask = ref(0)
+
+const deleteTask = (id) => {
+  tasks.value = tasks.value.filter((task) => task.id !== id)
+
+  for (let i = 0; i < tasks.value.length; i++) {
+    tasks.value[i].id = i
+  }
+}
+
+const setCompletion = (id) => {
+  tasks.value.find((task) => task.id === id).isCompleted = !tasks.value.find(
+    (task) => task.id === id,
+  ).isCompleted
+}
+
+const addTask = () => {
+  if (newTask.value === '') return
+  tasks.value.push({
+    id: tasks.value.length + 1,
+    description: newTask.value,
+    isCompleted: false,
+  })
+
+  for (let i = 0; i < tasks.value.length; i++) {
+    tasks.value[i].id = i
+    // console.log(i)
+  }
+
+  newTask.value = ''
+}
+
+const cancelAddTask = () => {
+  newTask.value = ''
+}
+
+const editTask = (id) => {
+  // console.log(id)
+  editedTask.value = tasks.value[id].description
+  idForEditedTask.value = id
+  // newTask.value = ''
+}
+
+const saveEditedTask = () => {
+  tasks.value[idForEditedTask.value].description = editedTask.value
+  editedTask.value = ''
+}
+
+const cancelEditTask = () => {
+  editedTask.value = ''
+}
 </script>
 
 <template>
@@ -30,35 +85,48 @@ const tasks = ref([
   <RouterView /> -->
 
   <div class="container--home">
-    <h1>Список задач</h1>
+    <h2>Список задач</h2>
+    <div>Значение текущее переменной tasks: {{ tasks }}</div>
     <a class="create-link" href="#">Создать задачу</a>
-    <div class="task">
-      <p class="task__number">99.</p>
-      <p class="task__text">Изучить основы Vue</p>
+    <div
+      v-for="task in tasks"
+      :key="task.id"
+      class="task"
+      :class="{ 'task--completed': task.isCompleted }"
+      @click="setCompletion(task.id)"
+    >
+      <p class="task__number">{{ task.id + 1 }} .</p>
+      <p class="task__text">{{ task.description }}</p>
       <div>
-        <button class="task__delete" @click="deleteTask(task.id)">Удалить</button>
-        <button class="task__edit" @click="editTask(task.id)">Редактировать</button>
+        <button class="task__delete" @click.stop="deleteTask(task.id)">Удалить</button>
+        <button class="task__edit" @click.stop="editTask(task.id)">Редактировать</button>
       </div>
     </div>
   </div>
 
   <div class="container--create">
+    <h2>Создать задачу</h2>
+    <div>Значение текущее newTask: {{ newTask }}</div>
+
     <form @submit.prevent="addTask" class="create__form">
       <label for="create-task">Название задачи</label>
       <input v-model="newTask" type="text" placeholder="" id="create-task" />
       <div>
-        <button class="create__cancel">Отменить</button>
-        <button class="create__save">Сохранить</button>
+        <button class="create__cancel" type="button" @click="cancelAddTask">Отменить</button>
+        <button class="create__save" type="submit">Сохранить</button>
       </div>
     </form>
   </div>
+
   <div class="container--edit">
-    <form @submit.prevent="addTask" class="edit__form">
+    <h2>Редактировать задачу</h2>
+
+    <form @submit.prevent="saveEditedTask" class="edit__form">
       <label for="edit-task">Название задачи</label>
-      <input v-model="newTask" type="text" placeholder="" id="edit-task" />
+      <input v-model="editedTask" type="text" placeholder="" id="edit-task" />
       <div>
-        <button class="edit__cancel">Отменить</button>
-        <button class="edit__save">Сохранить</button>
+        <button class="edit__cancel" type="button" @click="cancelEditTask">Отменить</button>
+        <button class="edit__save" type="submit">Сохранить</button>
       </div>
     </form>
   </div>
@@ -82,7 +150,7 @@ const tasks = ref([
   border-bottom: 2px solid #ffffff;
 }
 
-.container--home h1 {
+.container--home h2 {
   margin-bottom: 12px;
   font-weight: 400;
   font-style: normal;
@@ -137,6 +205,15 @@ const tasks = ref([
 
   display: flex;
   align-items: center;
+  cursor: pointer;
+}
+
+.task--completed {
+  background-color: rgb(220 252 231);
+}
+
+.task--completed .task__text {
+  text-decoration: line-through;
 }
 
 .task__number {
@@ -204,6 +281,11 @@ const tasks = ref([
 
   cursor: pointer;
 
+  /* position: relative;
+  z-index: 2; */
+
+  /* user-select: none; */
+
   transition: all 0.3s ease;
 }
 
@@ -225,8 +307,17 @@ const tasks = ref([
   border-bottom: 2px solid #ffffff;
 }
 
-.create__form {
+.container--create h2 {
+  margin-bottom: 12px;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+
+  text-align: center;
 }
+
+/* .create__form {
+} */
 
 .create__form label {
   display: block;
@@ -335,27 +426,6 @@ const tasks = ref([
 
 /* _______ */
 
-/* .container--edit {
-}
-
-.edit__form {
-}
-
-.edit__form label {
-}
-
-.edit__form input {
-}
-
-.edit__form div {
-}
-
-.edit__cancel {
-}
-
-.edit__save {
-} */
-
 .container--edit {
   width: 412px;
   margin: 0 auto;
@@ -364,8 +434,17 @@ const tasks = ref([
   border-bottom: 2px solid #ffffff;
 }
 
-.edit__form {
+.container--edit h2 {
+  margin-bottom: 12px;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+
+  text-align: center;
 }
+
+/* .edit__form {
+} */
 
 .edit__form label {
   display: block;
