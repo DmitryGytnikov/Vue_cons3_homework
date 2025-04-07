@@ -28,6 +28,10 @@ const idForEditedTask = ref(0)
 
 const isTransitionFromHome = ref(false)
 
+const createTask = () => {
+  document.getElementById('create-task').focus()
+}
+
 const deleteTask = (id) => {
   tasks.value = tasks.value.filter((task) => task.id !== id)
 
@@ -66,15 +70,15 @@ const editTask = (id) => {
   // console.log(id)
   editedTask.value = tasks.value[id].description
   idForEditedTask.value = id
-  isTransitionFromHome.value = !isTransitionFromHome.value
   isTransitionFromHome.value = true
+  document.getElementById('edit-task').focus()
 }
 
 const saveEditedTask = () => {
-  // проверить, что if работает !!!
   if (isTransitionFromHome.value === true) {
     tasks.value[idForEditedTask.value].description = editedTask.value
     editedTask.value = ''
+    isTransitionFromHome.value = false
   } else {
     editedTask.value = ''
   }
@@ -96,7 +100,7 @@ const cancelEditTask = () => {
   <div class="container--home">
     <h2>Список задач</h2>
     <div>Значение текущее переменной tasks: {{ tasks }}</div>
-    <a class="create-link" href="#">Создать задачу</a>
+    <a @click="createTask" class="create-link">Создать задачу</a>
     <div
       v-for="task in tasks"
       :key="task.id"
@@ -107,8 +111,8 @@ const cancelEditTask = () => {
       <p class="task__number">{{ task.id + 1 }} .</p>
       <p class="task__text">{{ task.description }}</p>
       <div>
-        <button class="task__delete" @click.stop="deleteTask(task.id)">Удалить</button>
-        <button class="task__edit" @click.stop="editTask(task.id)">Редактировать</button>
+        <button @click.stop="deleteTask(task.id)" class="task__delete">Удалить</button>
+        <button @click.stop="editTask(task.id)" class="task__edit">Редактировать</button>
       </div>
     </div>
   </div>
@@ -121,7 +125,7 @@ const cancelEditTask = () => {
       <label for="create-task">Название задачи</label>
       <input v-model="newTask" type="text" placeholder="" id="create-task" />
       <div>
-        <button class="create__cancel" type="button" @click="cancelAddTask">Отменить</button>
+        <button @click="cancelAddTask" class="create__cancel" type="button">Отменить</button>
         <button class="create__save" type="submit">Сохранить</button>
       </div>
     </form>
@@ -137,7 +141,7 @@ const cancelEditTask = () => {
       <label for="edit-task">Название задачи</label>
       <input v-model="editedTask" type="text" placeholder="" id="edit-task" />
       <div>
-        <button class="edit__cancel" type="button" @click="cancelEditTask">Отменить</button>
+        <button @click="cancelEditTask" class="edit__cancel" type="button">Отменить</button>
         <button class="edit__save" type="submit">Сохранить</button>
       </div>
     </form>
