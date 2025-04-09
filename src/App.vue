@@ -1,7 +1,5 @@
 <script setup>
-// import { computed, ref } from "vue"
 import { ref } from 'vue'
-// import TodoTask from "./components/TodoTask.vue"
 
 const tasks = ref([
   {
@@ -91,15 +89,9 @@ const cancelEditTask = () => {
 </script>
 
 <template>
-  <!-- <nav>
-    <RouterLink to="/">Home</RouterLink>
-    <RouterLink to="/about">About</RouterLink>
-  </nav>
-  <RouterView /> -->
-
   <div class="container--home">
     <h2>Список задач</h2>
-    <div>Значение текущее переменной tasks: {{ tasks }}</div>
+    <!-- <div>Значение текущее переменной tasks: {{ tasks }}</div> -->
     <a @click="createTask" class="create-link">Создать задачу</a>
     <div
       v-for="task in tasks"
@@ -119,7 +111,7 @@ const cancelEditTask = () => {
 
   <div class="container--create">
     <h2>Создать задачу</h2>
-    <div>Значение текущее newTask: {{ newTask }}</div>
+    <!-- <div>Значение текущее newTask: {{ newTask }}</div> -->
 
     <form @submit.prevent="addTask" class="create__form">
       <label for="create-task">Название задачи</label>
@@ -133,16 +125,16 @@ const cancelEditTask = () => {
 
   <div class="container--edit">
     <h2>Редактировать задачу</h2>
-    <div>Значение текущее editedTask: {{ editedTask }}</div>
+    <!-- <div>Значение текущее editedTask: {{ editedTask }}</div>
     <div>Значение текущее idForEditedTask: {{ idForEditedTask }}</div>
-    <div>Значение текущее isTransitionFromHome: {{ isTransitionFromHome }}</div>
+    <div>Значение текущее isTransitionFromHome: {{ isTransitionFromHome }}</div> -->
 
     <form @submit.prevent="saveEditedTask" class="edit__form">
       <label for="edit-task">Название задачи</label>
       <input v-model="editedTask" type="text" placeholder="" id="edit-task" />
       <div>
         <button @click="cancelEditTask" class="edit__cancel" type="button">Отменить</button>
-        <button class="edit__save" type="submit">Сохранить</button>
+        <button class="edit__save" type="submit">Сохранить изменения</button>
       </div>
     </form>
   </div>
@@ -297,11 +289,6 @@ const cancelEditTask = () => {
 
   cursor: pointer;
 
-  /* position: relative;
-  z-index: 2; */
-
-  /* user-select: none; */
-
   transition: all 0.3s ease;
 }
 
@@ -331,9 +318,6 @@ const cancelEditTask = () => {
 
   text-align: center;
 }
-
-/* .create__form {
-} */
 
 .create__form label {
   display: block;
@@ -366,9 +350,7 @@ const cancelEditTask = () => {
 .create__form input::placeholder {
   font-style: normal;
   font-weight: 400;
-  /* font-size: 1rem; */
   color: black;
-  /* opacity: 0.4; */
 }
 
 .create__form input:hover {
@@ -459,9 +441,6 @@ const cancelEditTask = () => {
   text-align: center;
 }
 
-/* .edit__form {
-} */
-
 .edit__form label {
   display: block;
   margin-bottom: 8px;
@@ -479,7 +458,6 @@ const cancelEditTask = () => {
 
   font-style: normal;
   font-weight: 400;
-  /* font-size: 1rem; */
   color: black;
 
   border: 1px solid #9ca3af;
@@ -493,9 +471,7 @@ const cancelEditTask = () => {
 .edit__form input::placeholder {
   font-style: normal;
   font-weight: 400;
-  /* font-size: 1rem; */
   color: black;
-  /* opacity: 0.4; */
 }
 
 .edit__form input:hover {
